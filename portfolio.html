@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  SINGLE-FILE DELIVERABLE — Lord Stephen H. Cambalon
+  ----------------------------------------------------------------------------
+  Tabs at the top of the page:
+    1. PORTFOLIO  -> the single-page portfolio website (Deliverable A)
+    2. README.md  -> the GitHub profile README source (Deliverable B)
+    3. CHECKLIST  -> every [NEEDS VERIFICATION] / link / image path to fill in
+
+  The portfolio is dependency-free (no build step, no CDN). Open this file in
+  a browser and it runs. Design tokens were read from the reference site.
+  ============================================================================
+-->
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lord Stephen H. Cambalon — Aspiring Software Engineer &amp; Game Developer</title>
+<meta name="description" content="Portfolio of Lord Stephen H. Cambalon, 2nd year BSIT student and aspiring software engineer and game developer." />
+<style>
+/* ===========================================================================
+   1. DESIGN TOKENS
+   Values taken from the reference site's compiled CSS variables, renamed.
+   =========================================================================== */
+:root{
+  --accent:        #d97757;   /* single accent (terracotta) */
+  --accent-hover:  #c2613b;
+  --accent-2:      #6ea8ff;
+  --accent-line:   #d977574d;
+  --accent-soft:   #d977571f;
+
+  --bg:            #0d0f12;
+  --code-bg:       #0a0c0f;
+  --surface:       #14171c;
+  --surface-2:     #1a1e24;
+  --chip-bg:       #1a1e24;
+
+  --line:          #1f242c;
+  --line-strong:   #2a313b;
+
+  --ink:           #e8ecf1;
+  --ink-dim:       #9aa3b0;
+  --ink-faint:     #5d6675;
+
+  --ok:            #7dd3a0;
+  --warn:          #e6b25c;
+  --err:           #e88080;
+
+  --r-sm: 7px;
+  --r-md: 10px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+
+  --font-sans: "Geist Sans", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --maxw: 1180px;
+}
+
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; scroll-padding-top:70px; }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink-dim);
+  font-family:var(--font-sans);
+  font-size:15px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+img{ max-width:100%; display:block; }
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; color:inherit; background:none; border:none; cursor:pointer; }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:4px; }
+
+/* ---- typography helpers ---- */
+h1,h2,h3,h4{ color:var(--ink); margin:0; letter-spacing:-0.02em; line-height:1.12; font-weight:700; }
+h1{ font-size:clamp(32px,4.4vw,52px); line-height:1.04; letter-spacing:-0.035em; }
+h2{ font-size:clamp(24px,2.6vw,32px); letter-spacing:-0.028em; }
+h3{ font-size:16px; }
+p{ margin:0; }
+.mono{ font-family:var(--font-mono); }
+code{
+  font-family:var(--font-mono); font-size:.86em;
+  background:var(--code-bg); border:1px solid var(--line);
+  border-radius:5px; padding:1px 6px; color:#e89a7d;
+}
+.eyebrow{
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.09em;
+  text-transform:lowercase; color:var(--ink-faint);
+  margin:0 0 14px;
+}
+.eyebrow::before{
+  content:""; width:16px; height:1px; background:var(--accent);
+}
+.accent{ color:var(--accent); }
+
+/* ---- layout ---- */
+.wrap{ max-width:var(--maxw); margin:0 auto; padding:0 22px; }
+@media (min-width:768px){ .wrap{ padding:0 32px; } }
+section{ position:relative; }
+.sec{ padding:72px 0; }
+@media (min-width:768px){ .sec{ padding:96px 0; } }
+.sec-head{ max-width:640px; margin:0 0 40px; }
+.sec-head p{ margin-top:14px; font-size:14.5px; max-width:560px; }
+
+/* ===========================================================================
+   2. TOP DELIVERABLE SWITCHER (portfolio / readme / checklist)
+   =========================================================================== */
+.switcher{
+  position:sticky; top:0; z-index:60;
+  display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+  padding:9px 22px;
+  background:rgba(13,15,18,.92); backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+  font-family:var(--font-mono); font-size:11.5px;
+}
+.switcher .lbl{ color:var(--ink-faint); letter-spacing:.08em; margin-right:4px; }
+.switcher button{
+  border:1px solid var(--line); border-radius:var(--r-sm);
+  padding:5px 11px; color:var(--ink-dim); transition:all .15s;
+}
+.switcher button:hover{ border-color:var(--line-strong); background:var(--surface-2); color:var(--ink); }
+.switcher button[aria-selected="true"]{
+  background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600;
+}
+.viewport > section[data-view]{ display:none; }
+.viewport > section[data-view].active{ display:block; }
+
+/* ===========================================================================
+   3. NAVBAR
+   =========================================================================== */
+.nav{
+  position:sticky; top:36px; z-index:50;
+  background:rgba(13,15,18,.78); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.nav-inner{
+  max-width:90rem; margin:0 auto; padding:0 22px;
+  height:52px; display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+.brand{ display:flex; align-items:center; gap:9px; transition:opacity .15s; }
+.brand:hover{ opacity:.8; }
+.brand-mark{
+  width:26px; height:26px; display:grid; place-items:center; border-radius:var(--r-sm);
+  background:linear-gradient(135deg,#eaa888,var(--accent));
+  font-family:var(--font-mono); font-size:13px; font-weight:800; color:#0d0f12;
+}
+.brand-name{ font-size:14px; font-weight:700; letter-spacing:-.02em; color:var(--ink); }
+.nav-links{ display:flex; align-items:center; gap:2px; }
+.nav-links a{
+  font-size:13.5px; font-weight:500; color:var(--ink-dim);
+  padding:8px 11px; border-radius:6px; transition:all .15s;
+}
+.nav-links a:hover{ background:var(--surface-2); color:var(--ink); }
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:44px; padding:0 22px; border-radius:8px;
+  font-family:var(--font-mono); font-size:13px; font-weight:600;
+  transition:all .15s; border:1px solid transparent; white-space:nowrap;
+}
+.btn-primary{
+  background:var(--accent); color:#fff;
+  box-shadow:0 6px 18px -8px rgba(217,119,87,.5), inset 0 1px 0 rgba(255,255,255,.15);
+}
+.btn-primary:hover{ background:var(--accent-hover); }
+.btn-primary .arrow{ transition:transform .15s; }
+.btn-primary:hover .arrow{ transform:translateX(3px); }
+.btn-ghost{
+  border-color:var(--line); background:var(--surface); color:var(--ink-dim);
+}
+.btn-ghost:hover{ border-color:var(--line-strong); background:var(--surface-2); color:var(--ink); }
+.btn-sm{ height:30px; padding:0 12px; font-size:12px; border-radius:7px; }
+.btn[disabled], .btn.is-disabled{
+  opacity:.45; cursor:not-allowed; pointer-events:none;
+}
+.nav-cta{ display:flex; align-items:center; gap:10px; }
+.icon-btn{
+  width:30px; height:30px; display:grid; place-items:center;
+  border:1px solid var(--line); border-radius:7px; color:var(--ink-dim); transition:all .15s;
+}
+.icon-btn:hover{ background:var(--surface-2); color:var(--ink); }
+.icon-btn svg{ width:15px; height:15px; }
+.nav-burger{ display:none; }
+@media (max-width:860px){
+  .nav-links{ display:none; }
+  .nav-burger{ display:grid; }
+}
+.mobile-menu{
+  display:none; border-bottom:1px solid var(--line);
+  background:var(--bg); padding:10px 22px 16px;
+}
+.mobile-menu.open{ display:block; }
+.mobile-menu a{
+  display:block; padding:10px 8px; font-size:14px; color:var(--ink-dim);
+  border-bottom:1px solid var(--line);
+}
+.mobile-menu a:hover{ color:var(--ink); }
+
+/* ===========================================================================
+   4. HERO
+   =========================================================================== */
+.hero{ position:relative; overflow:hidden; }
+.hero::before{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size:30px 30px; opacity:.5;
+  -webkit-mask-image:radial-gradient(ellipse 80% 70% at 70% 0%, #000, transparent 72%);
+          mask-image:radial-gradient(ellipse 80% 70% at 70% 0%, #000, transparent 72%);
+}
+.hero::after{
+  content:""; position:absolute; right:-80px; top:-120px;
+  width:620px; height:620px; pointer-events:none;
+  background:radial-gradient(circle, rgba(217,119,87,.12), transparent 62%);
+}
+.hero-grid{
+  position:relative; z-index:1;
+  display:grid; grid-template-columns:1fr; gap:40px; align-items:center;
+  padding:52px 0 64px;
+}
+@media (min-width:900px){
+  .hero-grid{ grid-template-columns:1.04fr .96fr; gap:48px; padding:76px 0 88px; }
+}
+.hero-pill{
+  display:inline-flex; align-items:center; gap:9px;
+  border:1px solid var(--line); background:var(--surface);
+  border-radius:999px; padding:5px 12px 5px 10px; margin-bottom:22px;
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; color:var(--ink-dim);
+}
+.dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); animation:pulse 2s infinite; }
+@keyframes pulse{ 0%,100%{opacity:1; transform:scale(1);} 50%{opacity:.45; transform:scale(.82);} }
+.hero h1{ margin-bottom:20px; }
+.hero-sub{ max-width:490px; font-size:16px; margin-bottom:28px; }
+.hero-ctas{ display:flex; flex-wrap:wrap; gap:12px; margin-bottom:32px; }
+
+/* stats row */
+.stats{ display:flex; flex-wrap:wrap; align-items:center; gap:26px; }
+.stat{ display:flex; align-items:baseline; gap:7px; }
+.stat-num{ font-family:var(--font-mono); font-size:22px; font-weight:700; color:var(--ink); }
+.stat-lbl{ font-family:var(--font-mono); font-size:11.5px; color:var(--ink-faint); }
+.stat-sep{ width:1px; height:20px; background:var(--line); }
+@media (max-width:520px){ .stat-sep{ display:none; } }
+
+/* hero photo slot */
+
+/* ===========================================================================
+   5. CODE EDITOR WINDOW
+   =========================================================================== */
+.editor{
+  overflow:hidden; border-radius:var(--r-lg);
+  border:1px solid var(--line-strong); background:var(--code-bg);
+  font-family:var(--font-mono);
+  box-shadow:0 40px 80px -40px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.02);
+}
+.editor-bar{
+  display:flex; align-items:center; gap:8px;
+  height:38px; padding:0 14px; border-bottom:1px solid var(--line); background:var(--surface);
+}
+.lamp{ width:10px; height:10px; border-radius:50%; }
+.lamp.r{ background:var(--err); } .lamp.y{ background:var(--warn); } .lamp.g{ background:var(--ok); }
+.editor-file{ margin-left:8px; font-size:11px; color:var(--ink-faint); letter-spacing:.02em; }
+.editor-run{
+  margin-left:auto; display:inline-flex; align-items:center; gap:5px;
+  font-size:10px; color:var(--ok); border:1px solid var(--line);
+  border-radius:6px; padding:3px 8px; transition:all .15s;
+}
+.editor-run:hover{ border-color:var(--accent-line); color:var(--accent); }
+.editor-body{
+  display:grid; grid-template-columns:auto 1fr; gap:0 16px;
+  padding:16px 18px 8px; font-size:12.5px; line-height:1.75; overflow-x:auto;
+}
+.gutter{ text-align:right; color:var(--ink-faint); opacity:.7; user-select:none; white-space:pre; }
+.code{ white-space:pre; color:var(--ink); }
+.code .k{ color:var(--accent); }
+.code .t{ color:var(--ok); }
+.code .s{ color:#e6b25c; }
+.code .c{ color:var(--ink-faint); font-style:italic; }
+.code .p{ color:var(--accent-2); }
+.caret{
+  display:inline-block; width:7px; height:15px; margin-left:1px;
+  background:var(--accent); vertical-align:text-bottom;
+  animation:blink 1.05s steps(1) infinite;
+}
+@keyframes blink{ 0%,50%{opacity:1;} 50.01%,100%{opacity:0;} }
+.editor-result{
+  display:none; margin:0 18px 16px; padding:9px 12px;
+  border:1px solid var(--line); border-left:2px solid var(--ok);
+  border-radius:var(--r-sm); background:var(--surface);
+  font-size:11.5px; color:var(--ink-dim);
+}
+.editor-result.show{ display:block; animation:fadeUp .35s both; }
+.editor-result b{ color:var(--ok); font-weight:600; }
+.editor-note{ padding:0 18px 14px; font-size:10.5px; color:var(--ink-faint); }
+
+/* ===========================================================================
+   6. PILLS / TAGS / BADGES
+   =========================================================================== */
+.pill{
+  display:inline-flex; align-items:center; gap:5px;
+  border:1px solid var(--accent-line); background:var(--accent-soft);
+  color:#eda184; border-radius:999px; padding:2px 9px;
+  font-family:var(--font-mono); font-size:10.5px; white-space:nowrap;
+}
+.pill-neutral{ border-color:var(--line); background:var(--surface-2); color:var(--ink-dim); }
+.tag{
+  display:inline-flex; align-items:center;
+  border:1px solid var(--line); background:var(--chip-bg); color:var(--ink-dim);
+  border-radius:6px; padding:2px 7px;
+  font-family:var(--font-mono); font-size:10.5px; white-space:nowrap;
+}
+.tags{ display:flex; flex-wrap:wrap; gap:6px; }
+
+/* ===========================================================================
+   7. ABOUT
+   =========================================================================== */
+.about-grid{ display:grid; grid-template-columns:1fr; gap:34px; }
+@media (min-width:880px){ .about-grid{ grid-template-columns:1.25fr .75fr; gap:44px; } }
+.about-copy p{ margin-bottom:14px; }
+.about-facts{ margin:20px 0 0; padding:0; list-style:none; display:grid; gap:0; }
+.about-facts li{
+  display:flex; justify-content:space-between; gap:16px;
+  padding:11px 2px; border-bottom:1px solid var(--line);
+  font-size:13.5px;
+}
+.about-facts .k{ color:var(--ink-faint); font-family:var(--font-mono); font-size:11.5px; text-transform:lowercase; letter-spacing:.05em; }
+.about-facts .v{ color:var(--ink); text-align:right; }
+
+/* ===========================================================================
+   8. IMAGE SLOTS
+   =========================================================================== */
+.slot{
+  position:relative; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:6px;
+  border:1px dashed var(--line-strong); border-radius:var(--r-md);
+  background:repeating-linear-gradient(45deg,rgba(255,255,255,.012) 0 8px,transparent 8px 16px),var(--surface);
+  color:var(--ink-faint); text-align:center; padding:14px; overflow:hidden;
+}
+.slot .slot-icon{ width:20px; height:20px; opacity:.6; }
+.slot .slot-dims{ font-family:var(--font-mono); font-size:10.5px; color:var(--ink-faint); }
+.slot .slot-path{
+  font-family:var(--font-mono); font-size:10px; color:var(--accent);
+  background:var(--accent-soft); border:1px solid var(--accent-line);
+  border-radius:5px; padding:1px 6px; word-break:break-all; max-width:100%;
+}
+.slot img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+
+/* ===========================================================================
+   9. FILTER TABS + PROJECT CARDS
+   =========================================================================== */
+.filters{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:26px; }
+.filter{
+  border:1px solid var(--line); background:transparent; color:var(--ink-dim);
+  border-radius:7px; padding:6px 12px; font-family:var(--font-mono); font-size:11.5px;
+  transition:all .15s;
+}
+.filter:hover{ border-color:var(--line-strong); background:var(--surface-2); color:var(--ink); }
+.filter[aria-pressed="true"]{ background:var(--accent-soft); border-color:var(--accent-line); color:#eda184; }
+
+.grid-3{ display:grid; grid-template-columns:1fr; gap:16px; }
+@media (min-width:720px){ .grid-3{ grid-template-columns:repeat(2,1fr); } }
+@media (min-width:1040px){ .grid-3{ grid-template-columns:repeat(3,1fr); } }
+
+.card{
+  position:relative; display:flex; flex-direction:column; text-align:left;
+  border:1px solid var(--line); border-radius:var(--r-lg); background:var(--surface);
+  overflow:hidden; transition:border-color .18s, transform .18s, box-shadow .18s;
+}
+.card:hover{
+  border-color:var(--accent-line); transform:translateY(-3px);
+  box-shadow:0 18px 40px -26px rgba(217,119,87,.55);
+}
+.card-top{ display:flex; align-items:center; gap:10px; padding:13px 16px; border-bottom:1px solid var(--line); }
+.card-idx{
+  font-family:var(--font-mono); font-size:11px; color:var(--ink-faint);
+  border:1px solid var(--line); border-radius:5px; padding:1px 6px;
+}
+.card-cat{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.07em; color:var(--ink-faint); text-transform:lowercase; }
+.card-cover{ aspect-ratio:16/9; border-bottom:1px solid var(--line); border-radius:0; }
+.card-body{ padding:15px 16px 17px; display:flex; flex-direction:column; gap:10px; flex:1; }
+.card-title{ color:var(--ink); font-size:15px; font-weight:600; letter-spacing:-.015em; }
+.card-desc{ font-size:13.2px; color:var(--ink-dim); flex:1; }
+.card-foot{ display:flex; align-items:center; gap:8px; margin-top:2px; }
+.card-foot .spacer{ flex:1; }
+.mini{
+  display:inline-flex; align-items:center; gap:5px; height:26px; padding:0 9px;
+  border:1px solid var(--line); border-radius:6px; color:var(--ink-dim);
+  font-family:var(--font-mono); font-size:10.5px; transition:all .15s;
+}
+.mini:hover:not(.is-disabled){ border-color:var(--line-strong); background:var(--surface-2); color:var(--ink); }
+.mini.is-disabled{ opacity:.4; cursor:not-allowed; }
+.card.locked{ opacity:.72; }
+.card.locked:hover{ transform:none; box-shadow:none; border-color:var(--line); }
+.lock-badge{
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:var(--font-mono); font-size:10px; color:var(--warn);
+  border:1px solid #e6b25c33; background:#e6b25c14; border-radius:999px; padding:2px 8px;
+}
+
+/* ===========================================================================
+   10. TECH TABLE
+   =========================================================================== */
+.table-wrap{ border:1px solid var(--line); border-radius:var(--r-lg); overflow:hidden; background:var(--surface); }
+table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+thead th{
+  text-align:left; padding:11px 16px; border-bottom:1px solid var(--line);
+  background:var(--surface-2); color:var(--ink-faint);
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; text-transform:lowercase; font-weight:500;
+}
+tbody td{ padding:12px 16px; border-bottom:1px solid var(--line); }
+tbody tr:last-child td{ border-bottom:none; }
+tbody tr{ transition:background .15s; }
+tbody tr:hover{ background:#ffffff05; }
+.tech-cell{ display:flex; align-items:center; gap:10px; color:var(--ink); }
+.lang-dot{ width:8px; height:8px; border-radius:50%; background:var(--accent); flex:none; }
+.lang-dot.b{ background:var(--accent-2); }
+.lvl{
+  font-family:var(--font-mono); font-size:10.5px; color:var(--ink-dim);
+  border:1px solid var(--line); background:var(--surface-2); border-radius:999px; padding:2px 9px; white-space:nowrap;
+}
+.tool-groups{ display:grid; grid-template-columns:1fr; gap:14px; margin-top:22px; }
+@media (min-width:760px){ .tool-groups{ grid-template-columns:repeat(2,1fr); } }
+@media (min-width:1040px){ .tool-groups{ grid-template-columns:repeat(4,1fr); } }
+.tool-group{ border:1px solid var(--line); border-radius:var(--r-lg); background:var(--surface); padding:15px 16px; }
+.tool-group h4{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em;
+  text-transform:lowercase; color:var(--ink-faint); font-weight:500; margin-bottom:11px;
+}
+
+/* ===========================================================================
+   11. LEARNING / MINDESET
+   =========================================================================== */
+.learning-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+@media (min-width:760px){ .learning-grid{ grid-template-columns:repeat(3,1fr); } }
+.mind-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+@media (min-width:700px){ .mind-grid{ grid-template-columns:repeat(2,1fr); } }
+@media (min-width:1040px){ .mind-grid{ grid-template-columns:repeat(3,1fr); } }
+.mind-card{
+  border:1px solid var(--line); border-radius:var(--r-lg); background:var(--surface);
+  padding:20px 20px 22px; transition:border-color .18s, transform .18s;
+}
+.mind-card:hover{ border-color:var(--accent-line); transform:translateY(-2px); }
+.mind-num{ font-family:var(--font-mono); font-size:11px; color:var(--accent); letter-spacing:.1em; margin-bottom:12px; }
+.mind-card h3{ margin-bottom:8px; }
+.mind-card p{ font-size:13.2px; }
+.learn-head{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+
+/* ===========================================================================
+   12. CTA + FOOTER
+   =========================================================================== */
+.cta-card{
+  position:relative; overflow:hidden; text-align:center;
+  border:1px solid var(--line); border-radius:var(--r-xl); background:var(--surface);
+  padding:52px 24px;
+}
+.cta-card::before{
+  content:""; position:absolute; left:50%; top:-160px; transform:translateX(-50%);
+  width:520px; height:380px; pointer-events:none;
+  background:radial-gradient(circle, rgba(217,119,87,.13), transparent 66%);
+}
+.cta-card > *{ position:relative; }
+.cta-card p{ max-width:470px; margin:0 auto 26px; font-size:14.5px; }
+.cta-btns{ display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
+.cta-slot{ margin-top:34px; }
+
+footer{ border-top:1px solid var(--line); margin-top:20px; }
+.foot-grid{
+  display:grid; grid-template-columns:1fr; gap:30px;
+  max-width:var(--maxw); margin:0 auto; padding:44px 22px 26px;
+}
+@media (min-width:820px){ .foot-grid{ grid-template-columns:1.6fr repeat(3,1fr); gap:34px; } }
+.foot-tag{ font-size:13px; margin-top:12px; max-width:280px; }
+.foot-social{ display:flex; gap:8px; margin-top:16px; }
+.foot-col h5{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:.09em;
+  text-transform:lowercase; color:var(--ink-faint); font-weight:500; margin:0 0 13px;
+}
+.foot-col a{ display:block; padding:4px 0; font-size:13.2px; color:var(--ink-dim); }
+.foot-col a:hover{ color:var(--ink); }
+.foot-term{
+  border-top:1px solid var(--line);
+  font-family:var(--font-mono); font-size:11.5px; color:var(--ink-faint);
+}
+.foot-term-inner{
+  max-width:var(--maxw); margin:0 auto; padding:16px 22px 30px;
+  display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; align-items:center;
+}
+.foot-term .prompt{ color:var(--accent); }
+.foot-term .cursor{ display:inline-block; width:7px; height:13px; background:var(--accent); vertical-align:-2px; animation:blink 1.05s steps(1) infinite; }
+
+/* ===========================================================================
+   13. MODAL (project detail)
+   =========================================================================== */
+.modal{
+  position:fixed; inset:0; z-index:80; display:none;
+  align-items:flex-start; justify-content:center; padding:24px 16px;
+  background:rgba(5,6,8,.72); backdrop-filter:blur(4px); overflow-y:auto;
+}
+.modal.open{ display:flex; animation:fadeIn .18s both; }
+.modal-panel{
+  width:100%; max-width:720px;
+  border:1px solid var(--line-strong); border-radius:var(--r-xl); background:var(--bg);
+  box-shadow:0 40px 90px -30px #000; margin:auto;
+}
+.modal-head{
+  display:flex; align-items:center; gap:10px;
+  padding:14px 18px; border-bottom:1px solid var(--line);
+  position:sticky; top:0; background:var(--bg); border-radius:var(--r-xl) var(--r-xl) 0 0; z-index:2;
+}
+.modal-close{
+  margin-left:auto; width:28px; height:28px; display:grid; place-items:center;
+  border:1px solid var(--line); border-radius:7px; color:var(--ink-dim); transition:all .15s;
+}
+.modal-close:hover{ background:var(--surface-2); color:var(--ink); }
+.modal-body{ padding:20px 18px 24px; }
+.modal-body h2{ font-size:22px; margin-bottom:8px; }
+.modal-meta{ display:flex; flex-wrap:wrap; gap:7px; margin-bottom:18px; }
+.modal-sec-label{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em;
+  text-transform:lowercase; color:var(--ink-faint); margin:20px 0 10px;
+}
+.modal-list{ margin:0; padding-left:18px; font-size:13.4px; }
+.modal-list li{ margin-bottom:6px; }
+.shots{ display:grid; grid-template-columns:1fr; gap:10px; }
+@media (min-width:560px){ .shots{ grid-template-columns:1fr 1fr; } }
+.shots .slot{ aspect-ratio:16/9; }
+.modal-links{ display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+.unverified{
+  font-family:var(--font-mono); font-size:11px; color:var(--warn);
+  border:1px solid #e6b25c33; background:#e6b25c12; border-radius:var(--r-sm);
+  padding:8px 10px; margin-top:10px; line-height:1.5;
+}
+
+/* ===========================================================================
+   14. SCROLL REVEAL
+   =========================================================================== */
+.reveal{ opacity:0; transform:translateY(16px); transition:opacity .6s cubic-bezier(.2,.7,.3,1), transform .6s cubic-bezier(.2,.7,.3,1); }
+.reveal.in{ opacity:1; transform:none; }
+@keyframes fadeUp{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+@keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
+@media (prefers-reduced-motion:reduce){
+  *{ animation:none !important; transition:none !important; }
+  html{ scroll-behavior:auto; }
+  .reveal{ opacity:1; transform:none; }
+}
+
+/* ===========================================================================
+   15. README + CHECKLIST VIEWS
+   =========================================================================== */
+.doc{
+  max-width:960px; margin:0 auto; padding:44px 22px 80px;
+}
+.doc h1{ font-size:clamp(26px,3.4vw,36px); margin-bottom:14px; }
+.doc h2{ font-size:22px; margin:38px 0 12px; }
+.doc > p{ max-width:720px; margin-bottom:14px; }
+pre.md{
+  margin:0; padding:20px; overflow-x:auto;
+  border:1px solid var(--line-strong); border-radius:var(--r-lg);
+  background:var(--code-bg); color:#d7dde5;
+  font-family:var(--font-mono); font-size:12.4px; line-height:1.7; white-space:pre;
+}
+.doc-actions{ display:flex; flex-wrap:wrap; gap:10px; margin:22px 0 6px; }
+.check-list{ display:grid; gap:8px; margin:0; padding:0; list-style:none; }
+.check-list li{
+  display:flex; gap:10px; align-items:flex-start;
+  border:1px solid var(--line); border-radius:var(--r-md); background:var(--surface);
+  padding:11px 13px; font-size:13.2px;
+}
+.box{
+  width:15px; height:15px; flex:none; margin-top:2px;
+  border:1px solid var(--line-strong); border-radius:4px; background:var(--surface-2);
+}
+.check-list .mono{ font-size:11.5px; color:var(--accent); word-break:break-all; }
+.check-list .grp{
+  margin:30px 0 12px; font-family:var(--font-mono); font-size:10.5px;
+  letter-spacing:.09em; text-transform:lowercase; color:var(--ink-faint);
+}
+</style>
+</head>
+<body>
+
+<!-- =========================================================================
+     DELIVERABLE SWITCHER
+     ====================================================================== -->
+<div class="switcher" role="tablist" aria-label="Deliverables">
+  <span class="lbl">deliverables</span>
+  <button role="tab" aria-selected="true" data-target="view-portfolio">portfolio.html</button>
+  <button role="tab" aria-selected="false" data-target="view-readme">README.md</button>
+</div>
+
+<!-- =========================================================================
+     VIEW 1 — DELIVERABLE A: THE PORTFOLIO WEBSITE
+     ====================================================================== -->
+<div class="viewport">
+
+<section data-view="view-portfolio" class="active" id="view-portfolio">
+
+  <!-- ---------- NAVBAR ---------- -->
+  <header class="nav">
+    <div class="nav-inner">
+      <div style="display:flex;align-items:center;gap:7px">
+        <a class="brand" href="#top" aria-label="Home">
+          <span class="brand-name">vxxcode</span>
+        </a>
+        <nav class="nav-links" aria-label="Main">
+          <a href="#about">About</a>
+          <a href="#projects">Projects</a>
+          <a href="#tech">Tech</a>
+          <a href="#learning">Learning</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+      <div class="nav-cta">
+        <a class="icon-btn" href="https://github.com/vxxcode" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0c-2.4-1.6-3.5-1.3-3.5-1.3a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 6 12c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2v3.5"/></svg>
+        </a>
+        <a class="btn btn-primary btn-sm" href="#contact">Contact me</a>
+        <button class="icon-btn nav-burger" id="burger" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#tech">Tech</a>
+      <a href="#learning">Learning</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ---------- HERO ---------- -->
+    <section class="hero" id="home">
+      <div class="wrap hero-grid">
+        <div>
+          <span class="hero-pill"><span class="dot"></span>bsit student &middot; continuous learner</span>
+          <h1>Lord Stephen H. Cambalon,<br><span class="accent">2nd year BSIT student.</span></h1>
+          <p class="hero-sub">
+            Aspiring Software Engineer and Game Developer. I build things to learn: C++ programs and games,
+            C# desktop and Unity applications, Roblox games in Luau, Java OOP projects, a web page, and a
+            Figma UI/UX prototype. I am still early in this, and I keep building anyway.
+          </p>
+          <div class="hero-ctas">
+            <a class="btn btn-primary" href="#projects">
+              View projects
+              <span class="arrow"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10m-4-4 4 4-4 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </a>
+            <a class="btn btn-ghost" href="https://github.com/vxxcode" target="_blank" rel="noopener noreferrer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0c-2.4-1.6-3.5-1.3-3.5-1.3a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 6 12c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2v3.5"/></svg>
+              GitHub
+            </a>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><span class="stat-num" data-count="10">0</span><span class="stat-lbl">projects</span></div>
+            <span class="stat-sep"></span>
+            <div class="stat"><span class="stat-num" data-count="9">0</span><span class="stat-lbl">languages</span></div>
+            <span class="stat-sep"></span>
+            <div class="stat"><span class="stat-num">2nd</span><span class="stat-lbl">year BSIT</span></div>
+          </div>
+
+          
+        </div>
+
+        <!-- CODE EDITOR WINDOW -->
+        <div class="min-w" style="min-width:0">
+          <div class="editor">
+            <div class="editor-bar">
+              <i class="lamp r"></i><i class="lamp y"></i><i class="lamp g"></i>
+              <span class="editor-file">about.ts</span>
+              <button class="editor-run" id="runBtn" aria-label="Run the decorative output">
+                <svg width="9" height="9" viewBox="0 0 10 10" fill="currentColor"><path d="M1 0.5 8 5 1 9.5Z"/></svg> run
+              </button>
+            </div>
+            <div class="editor-body">
+              <div class="gutter" id="gutter"></div>
+              <div class="code" id="code"></div>
+            </div>
+            <div class="editor-result" id="runResult">
+              <b>&#10003;</b> <span>about.ts</span> &mdash; verified facts only. every value above is something I can
+              point to; everything unverified is written as <span class="mono">[NEEDS VERIFICATION]</span>.
+            </div>
+            <div class="editor-note">// decorative terminal flourish &mdash; not a skill claim</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- ABOUT ---------- -->
+    <section class="sec" id="about">
+      <div class="wrap">
+        <div class="about-grid">
+          <div class="about-copy reveal">
+            <p class="eyebrow">about me</p>
+            <h2>A student who builds things to learn.</h2>
+            <p style="margin-top:16px">
+              I am a second year BSIT student named Lord Stephen H. Cambalon. I am aiming to become a
+              Software Engineer and a Game Developer, and right now that means learning by writing
+              programs that actually do something.
+            </p>
+            <p>
+              Most of my work is beginner level and I would rather show it than talk about it. I have
+              built a C# enrollment system, a Java e-commerce console shop, three Unity projects written
+              with C#, a Roblox game in Luau, three C++ games in VS Code, an HTML appreciation page,
+              and a Figma UI/UX design. That is ten projects, and they are the honest picture of where
+              I am right now.
+            </p>
+            <p>
+              I do not have a shortcut for getting better. What I have is perseverance and continuous
+              learning &mdash; I keep reading, keep building, and keep fixing things that break.
+            </p>
+
+            <ul class="about-facts">
+              <li><span class="k">name</span><span class="v">Lord Stephen H. Cambalon</span></li>
+              <li><span class="k">program</span><span class="v">BSIT &mdash; Bachelor of Science in Information Technology</span></li>
+              <li><span class="k">level</span><span class="v">2nd year &middot; Beginner / Entry-Level</span></li>
+              <li><span class="k">aiming for</span><span class="v">Software Engineer &middot; Game Developer</span></li>
+              <li><span class="k">school</span><span class="v">St. John Paul II College of Davao</span></li>
+              <li><span class="k">currently learning</span><span class="v">Java, HTML, CSS, JavaScript</span></li>
+              <li><span class="k">email</span><span class="v mono">lord_cambalon@sjp2cd.edu.ph</span></li>
+            </ul>
+          </div>
+
+          <div class="reveal">
+            <!-- IMAGE SLOT: about -->
+            <div class="slot" style="aspect-ratio:3/4">
+              <img src="/public/images/about/20252533.png" alt="Lord Stephen H. Cambalon" />
+          </div>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- ---------- PROJECTS ---------- -->
+    <section class="sec" id="projects" style="border-top:1px solid var(--line)">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <p class="eyebrow">projects</p>
+          <h2>Ten projects, one beginner at a time.</h2>
+          <p>
+            Every project below is something I built while learning. 
+          </p>
+        </div>
+
+        <div class="filters reveal" id="filters" role="group" aria-label="Filter projects by category"></div>
+        <div class="grid-3" id="projectGrid"></div>
+      </div>
+    </section>
+
+    <!-- ---------- TECH ---------- -->
+    <section class="sec" id="tech" style="border-top:1px solid var(--line)">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <p class="eyebrow">technologies</p>
+          <h2>Technologies I have worked with</h2>
+          <p>
+            These are the languages and tools I have actually used in projects or coursework. My level
+            across all of them is <strong style="color:var(--ink)">Beginner</strong>. There are no
+            percentages and no progress bars here on purpose.
+          </p>
+        </div>
+
+        <div class="table-wrap reveal">
+          <table>
+            <thead>
+              <tr><th style="width:34%">Technology</th><th>Used in</th><th style="width:20%">Level</th></tr>
+            </thead>
+            <tbody id="langTable"></tbody>
+          </table>
+        </div>
+
+        <div class="tool-groups reveal" id="toolGroups"></div>
+      </div>
+    </section>
+
+    <!-- ---------- LEARNING ---------- -->
+    <section class="sec" id="learning" style="border-top:1px solid var(--line)">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <p class="eyebrow">currently learning</p>
+          <h2>What I am working on right now.</h2>
+          <p>
+            These three are in progress, not finished. I am also spending most of my time
+            strengthening the languages I already use so that the fundamentals actually hold up.
+          </p>
+        </div>
+        <div class="learning-grid" id="learningGrid"></div>
+      </div>
+    </section>
+
+    <!-- ---------- MINDSET ---------- -->
+    <section class="sec" id="mindset" style="border-top:1px solid var(--line)">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <p class="eyebrow">developer mindset</p>
+          <h2>How I develop.</h2>
+          <p>
+            Nothing exotic. This is just how I work so far, written plainly so it is easy to judge
+            whether it matches how I actually show up.
+          </p>
+        </div>
+        <div class="mind-grid" id="mindGrid"></div>
+      </div>
+    </section>
+
+    <!-- ---------- CTA ---------- -->
+    <section class="sec" id="contact">
+      <div class="wrap">
+        <div class="cta-card reveal">
+          <p class="eyebrow" style="justify-content:center">contact</p>
+          <h2>If you are building something, I would like to hear about it.</h2>
+          <p>
+            I am open to internships, entry-level roles, and study groups. If you are hiring a
+            beginner who actually ships projects, my email and GitHub are the fastest way to reach me.
+          </p>
+          <div class="cta-btns">
+            <a class="btn btn-primary" href="mailto:lord_cambalon@sjp2cd.edu.ph">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+              Email me
+            </a>
+            <a class="btn btn-ghost" href="https://github.com/vxxcode" target="_blank" rel="noopener noreferrer">
+              View GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ---------- FOOTER ---------- -->
+  <footer>
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="#top">
+          <span class="brand-name">vxxcode</span>
+        </a>
+        <p class="foot-tag">2nd year BSIT student, aspiring Software Engineer and Game Developer. Learning in public.</p>
+        <div class="foot-social">
+          <a class="icon-btn" href="https://github.com/vxxcode" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0c-2.4-1.6-3.5-1.3-3.5-1.3a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 6 12c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2v3.5"/></svg>
+          </a>
+          <a class="icon-btn" href="mailto:lord_cambalon@sjp2cd.edu.ph" aria-label="Email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="foot-col">
+        <h5>portfolio</h5>
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#tech">Technologies</a>
+        <a href="#learning">Currently Learning</a>
+        <a href="#mindset">Mindset</a>
+      </div>
+      <div class="foot-col">
+        <h5>tech</h5>
+        <a href="#tech">C++</a>
+        <a href="#tech">C# / Unity</a>
+        <a href="#tech">Java</a>
+        <a href="#tech">Luau / Roblox</a>
+        <a href="#tech">HTML / CSS / JS</a>
+      </div>
+      <div class="foot-col">
+        <h5>links</h5>
+        <a href="https://github.com/vxxcode" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="mailto:lord_cambalon@sjp2cd.edu.ph">Email</a>
+        <a href="#" aria-disabled="true" class="is-disabled" title="not set">Resume &mdash; [ADD LINK]</a>
+      </div>
+    </div>
+
+    <div class="foot-term">
+      <div class="foot-term-inner">
+        <span>&copy; <span id="year">2026</span> Lord Stephen H. Cambalon. Beginner, still building.</span>
+        <span><span class="prompt">$</span> vxxcode --keep-building<span class="cursor"></span></span>
+      </div>
+    </div>
+  </footer>
+</section>
+
+<!-- =========================================================================
+     VIEW 2 — DELIVERABLE B: THE GITHUB PROFILE README
+     ====================================================================== -->
+<section data-view="view-readme" id="view-readme">
+  <div class="doc">
+    <p class="eyebrow">deliverable b</p>
+    <h1>README.md &mdash; GitHub profile</h1>
+    <p>
+      Save the text below as <code>README.md</code> in a repository named exactly
+      <code>vxxcode/vxxcode</code> and it becomes your GitHub profile page. Markers like
+      <code>[ADD GITHUB REPOSITORY]</code>, <code>[ADD DEMO]</code> and <code>[PASTE IMAGE HERE]</code>
+      are meant to be replaced.
+    </p>
+    <div class="doc-actions">
+      <button class="btn btn-primary btn-sm" id="copyReadme">Copy README.md</button>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/vxxcode" target="_blank" rel="noopener noreferrer">My GitHub</a>
+    </div>
+<pre class="md" id="readmeSrc"><!-- README CONTENT IS INSERTED BY THE SCRIPT BELOW --></pre>
+  </div>
+</section>
+
+</div><!-- /.viewport -->
+
+<script>
+/* ===========================================================================
+   DATA — 10 verified projects. Anything unconfirmed is written out literally
+   as [NEEDS VERIFICATION] rather than filled in with a guess.
+   =========================================================================== */
+const PLACEHOLDER = { repo:'[ADD GITHUB REPOSITORY]', demo:'[ADD DEMO]' };
+const isPlaceholder = v => !v || v === PLACEHOLDER.repo || v === PLACEHOLDER.demo;
+
+const PROJECTS = [
+  {
+    slug:'csharp-enrollment-system', title:'C# Enrollment System', category:'desktop',
+    catLabel:'Desktop App', techTags:['C#','Visual Studio'],
+    shortDescription:'A C# application built around a student enrollment system.',
+    fullDescription:'A beginner C# project that models how student enrollment information can be handled in an application. It is my first step into building a practical, real-world style program with C#, working through the logic a record-keeping program actually needs.',
+    whatItShows:'[NEEDS VERIFICATION] — concepts demonstrated not confirmed from source yet',
+    features:['[NEEDS VERIFICATION]'],
+    repoUrl:PLACEHOLDER.repo, demoUrl:PLACEHOLDER.demo, status:'built',
+    coverExt:'png',
+    whatItShowsQ:'Whether students can be added, edited, or removed, how the records are stored, and whether it uses WinForms, WPF, or console.',
+    featureQ:'Real feature list: add/edit/delete records, search, validation, data storage method, and UI framework.'
+  },
+  {
+    slug:'java-ecommerce-console-shop', title:'Java E-Commerce Game Console Shop', category:'oop',
+    catLabel:'OOP Project', techTags:['Java','OOP'],
+    shortDescription:'A Java project simulating a shop for game consoles.',
+    fullDescription:'A Java project themed around an e-commerce store that sells game consoles, built to practice object-oriented programming. Working through classes and responsibilities in a domain I actually care about made the OOP concepts stick better than isolated exercises.',
+    whatItShows:'[NEEDS VERIFICATION] — classes, interfaces, and design patterns not confirmed from source yet',
+    features:['[NEEDS VERIFICATION]'],
+    repoUrl:PLACEHOLDER.repo, demoUrl:PLACEHOLDER.demo, status:'built',
+    coverExt:'jpg',
+    whatItShowsQ:'The classes you defined, whether you used inheritance, interfaces, or abstract classes, and how you separated product logic from shop logic.',
+    featureQ:'Real feature list: product listing, cart, checkout flow, stock handling, and whether it runs in the console or has a GUI.'
+  },
+  {
+    slug:'jeepnibay', title:'JeepNiBay', category:'uiux',
+    catLabel:'UI/UX Design', techTags:['Figma','UI/UX'],
+    shortDescription:'A UI/UX design project created in Figma.',
+    fullDescription:'A Figma design project where I practiced planning and designing screens for an app or website. It is where I learned to think about layout, hierarchy and flow before touching any code.',
+    whatItShows:'[NEEDS VERIFICATION] — design process and deliverables not confirmed yet',
+    features:['[NEEDS VERIFICATION]'],
+    repoUrl:PLACEHOLDER.repo, demoUrl:PLACEHOLDER.demo, status:'built',
+    coverExt:'png',
+    whatItShowsQ:'The problem the design solves, who the target users are, how many screens you made, and whether the prototype is interactive.',
+    featureQ:'Real deliverable list: screens, wireframes, style guide, components, and prototype flow.'
+  },
+  {
+    slug:'mischiefs', title:'Mischiefs Clothing Online Shop', category:'web',
+    catLabel:'Web Development', techTags:['Java','NetBeans'],
+    shortDescription:'An online clothing shop built with Java and NetBeans.',
+    fullDescription:'A Java-based e-commerce web application for a clothing shop, built using NetBeans IDE. This project involved creating a functional online store with product listings, shopping cart, and checkout flow, giving me hands-on experience with Java web development and database integration.',
+    whatItShows:'[NEEDS VERIFICATION] — full feature set not confirmed from source yet',
+    features:['[NEEDS VERIFICATION]'],
+    repoUrl:PLACEHOLDER.repo, demoUrl:PLACEHOLDER.demo, status:'built',
+    coverExt:'png',
+    whatItShowsQ:'The Java frameworks used, database schema, and whether it includes user authentication, admin panel, or payment integration.',
+    featureQ:'Real feature list: product catalog, cart, checkout, user accounts, admin dashboard, and deployment status.'
+  },
+  {
+    slug:'hysteria', title:'Hysteria', category:'game',
+    catLabel:'Game Dev · Unity', techTags:['C#','Unity'],
+    shortDescription:'A game project made with C# and Unity.',
+    fullDescription:'A Unity game project where I practiced scripting gameplay with C#. Building inside the engine is how I am learning to connect a script to something a player can actually see and interact with.',
+    whatItShows:'[NEEDS VERIFICATION] — scripts and systems not confirmed from source yet',
+    features:['[NEEDS VERIFICATION]'],
+    repoUrl:PLACEHOLDER.repo, demoUrl:PLACEHOLDER.demo, status:'built',
+    coverExt:'jpg',
+    whatItShowsQ:'The C# scripts you wrote, the Unity systems used, and whether player movement, input, or UI is implemented.',
+    featureQ:'Real feature list: genre, player movement, enemies, scoring, scenes, UI, and whether it is playable.'
+  },
+  {
+    slug:'pcreatures', title:'PCreatures', category:'game',
+    catLabel:'Game Dev · Unity', techTags:['C#','Unity'],
+    shortDescription:'A game project made with C# and Unity.',
+    fullDescription:'A Unity project built with C# scripts as part of my game development learning. It is part of my Unity practice, working out how game logic translates from code into the editor.',
+    whatItShows:'[NEEDS VERIFICATION] — scripts and systems not confirmed from source yet',
+    features:['[NEEDS VERIFICATION]'],
+    repoUrl:PLACEHOLDER.repo, demoUrl:PLACEHOLDER.demo, status:'built',
+    coverExt:'png',
+    whatItShowsQ:'The C# scripts you wrote, the Unity systems used, and what the project is actually about.',
+    featureQ:'Real feature list: creature behaviour, movement, spawning, UI, and current project status.'
+  },
+  {
+    slug:'project-slayers', title:'Project Slayers', category:'game',
+    catLabel:'Game Dev · Roblox', techTags:['Luau','Roblox Studio'],
+    shortDescription:'A Roblox game made with Roblox Studio and Luau.',
+    fullDescription:'A Roblox experience where I practiced game scripting with Luau inside Roblox Studio. It is my first look at scripting for a shared, published platform rather than a program that only runs on my machine.',
+    whatItShows:'[NEEDS VERIFICATION] — Luau scripts and systems not confirmed from source yet',
+    features:['[NEEDS VERIFICATION]'],
+    repoUrl:PLACEHOLDER.repo, demoUrl:PLACEHOLDER.demo, status:'built',
+    coverExt:'jpg',
+    whatItShowsQ:'Which Luau scripts you wrote, which Roblox systems you used, and the current published status.',
+    featureQ:'Real feature list: gameplay loop, combat, progression, UI, and whether it is published on Roblox.'
+  },
+  {
+    slug:'snake-game', title:'Snake Game', category:'game',
+    catLabel:'Game Dev · C++', techTags:['C++','VS Code'],
+    shortDescription:'A C++ version of the classic Snake game.',
+    fullDescription:'A beginner C++ game written in VS Code, recreating the classic snake gameplay while practicing core programming logic. Grid updates, collision checks and state handling are the reason I picked it.',
+    whatItShows:'[NEEDS VERIFICATION] — language features not confirmed from source yet',
+    features:['[NEEDS VERIFICATION]'],
+    repoUrl:PLACEHOLDER.repo, demoUrl:PLACEHOLDER.demo, status:'built',
+    coverExt:'png',
+    whatItShowsQ:'Which C++ features you used: arrays or vectors, structs, classes, pointers, and the standard library headers involved.',
+    featureQ:'Real feature list: console or graphical, controls, scoring, collision handling, and pause or game-over states.'
+  },
+  {
+    slug:'fruit-catching-game', title:'Fruit Catching Game', category:'game',
+    catLabel:'Game Dev · C++', techTags:['C++','VS Code'],
+    shortDescription:'A C++ game where the goal is to catch fruit.',
+    fullDescription:'A beginner C++ game written in VS Code that practices game logic and player interaction. Timing and continuous updates are the parts I had to think hardest about in this one.',
+    whatItShows:'[NEEDS VERIFICATION] — language features not confirmed from source yet',
+    features:['[NEEDS VERIFICATION]'],
+    repoUrl:PLACEHOLDER.repo, demoUrl:PLACEHOLDER.demo, status:'built',
+    coverExt:'jpg',
+    whatItShowsQ:'Which C++ features you used and how the game loop is structured.',
+    featureQ:'Real feature list: console or graphical, controls, scoring, difficulty, and fail conditions.'
+  },
+  {
+    slug:'car-game', title:'Car Game', category:'game',
+    catLabel:'Game Dev · C++', techTags:['C++','VS Code'],
+    shortDescription:'A C++ car game project.',
+    fullDescription:'A beginner C++ car game written in VS Code that practices game logic and player input. Reading input every frame and reacting to it correctly taught me more about program flow than any exercise so far.',
+    whatItShows:'[NEEDS VERIFICATION] — language features not confirmed from source yet',
+    features:['[NEEDS VERIFICATION]'],
+    repoUrl:PLACEHOLDER.repo, demoUrl:PLACEHOLDER.demo, status:'built',
+    coverExt:'png',
+    whatItShowsQ:'Which C++ features you used, how input is read, and how the car state is tracked.',
+    featureQ:'Real feature list: controls, physics or movement model, obstacles, scoring, and console or graphical output.'
+  }
+];
+
+const CATEGORIES = [
+  {key:'all', label:'All'}, {key:'desktop', label:'Desktop'}, {key:'game', label:'Game Dev'},
+  {key:'web', label:'Web'}, {key:'uiux', label:'UI/UX'}, {key:'oop', label:'OOP'}
+];
+
+const LEARNING = [
+  {title:'Rust', line:'Systems programming with a borrow checker is a very different way of thinking from what I know so far. Currently learning.'},
+  {title:'Swift', line:'Wants to build for Apple platforms next. Currently learning.'},
+  {title:'Databases', line:'SQL and data modelling, so my programs can actually store things properly. Currently learning.'}
+];
+
+const MINDSET = [
+  {n:'01', t:'Learning', d:'I learn by building something small, then fixing what breaks. Reading alone never stuck for me the way running the code did.'},
+  {n:'02', t:'Building', d:'Projects are how I find out what I actually understand. Ten so far, and each one teaches me what the last one skipped.'},
+  {n:'03', t:'Making mistakes', d:'I break code constantly, mostly by changing too much at once. Now I change one thing, then run it.'},
+  {n:'04', t:'Improving', d:'I rewrite old projects when I learn something better. The first C++ game and the current one are not the same quality.'},
+  {n:'05', t:'Trying again', d:'When a topic does not click, I do not move on and hope. I go back, do a smaller version, and build up again.'},
+  {n:'06', t:'Growing', d:'I am a second year student. I do not have a title to lean on yet, so progress has to be visible in the work.'}
+];
+
+const LANGS = [
+  ['C++','Snake Game, Fruit Catching Game, Car Game'],
+  ['C#','C# Enrollment System, Hysteria, PCreatures'],
+  ['Java','Java E-Commerce Game Console Shop'],
+  ['PHP','Used when working with html based web pages'],
+  ['HTML','HTML Appreciation Page, A date proposal web page'],
+  ['CSS','Usedwhen working with html based web pages'],
+  ['JavaScript','Used when working with html based web pages'],
+  ['Python','Game logic and scripts for a few small projects'],
+  ['Luau','Project Slayers']
+];
+
+const TOOL_GROUPS = [
+  {h:'Editors & IDEs', items:['Visual Studio','Visual Studio Code','PyCharm','Eclipse','IntelliJ IDEA','NetBeans','XAMPP']},
+  {h:'Game engines', items:['Unity','Unreal Engine','Roblox Studio']},
+  {h:'Design', items:['Figma','Canva','Microsoft Office']},
+  {h:'Version control', items:['Git','GitHub']}
+];
+
+/* ===========================================================================
+   ABOUT.TS — typed object rendered into the hero code window
+   =========================================================================== */
+const ABOUT_SRC =
+'const about = {\n' +
+'  name: "Lord Stephen H. Cambalon",\n' +
+'  role: "Aspiring Software Engineer & Game Developer",\n' +
+'  program: "BSIT - 2nd year student",\n' +
+'  level: "Beginner / Entry-Level",\n' +
+'  // languages I have worked with\n' +
+'  languages: ["C++", "C#", "Java", "PHP", "HTML",\n' +
+'              "CSS", "JavaScript", "Python", "Luau"],\n' +
+'  // what I build to learn\n' +
+'  builds: ["C++ programs & games", "C# desktop & Unity",\n' +
+'           "Roblox games in Luau", "Java OOP",\n' +
+'           "a web page", "a Figma UI/UX prototype"],\n' +
+'  currentlyLearning: ["Rust", "Swift", "Databases"],\n' +
+'  // everything unverified stays unverified\n' +
+'  detail: "a larping beginner",\n' +
+'} as const;';
+
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function syntaxLines(src){
+  return src.split('\n').map((raw, i) => {
+    const code = raw.trimStart();
+    const indent = raw.slice(0, raw.length - code.length);
+    const isComment = code.trim().startsWith('//');
+    let body;
+    if (isComment) body = '<span class="c">'+esc(code)+'</span>';
+    else {
+      body = esc(code)
+        .replace(/(&quot;[^&]*?&quot;)/g, '<span class="s">$1</span>')
+        .replace(/\b(const|let|as)\b/g, '<span class="k">$1</span>')
+        .replace(/([A-Za-z_][A-Za-z0-9_]*)(?=\s*:)/g, '<span class="p">$1</span>');
+    }
+    return { num:i+1, html: indent + body };
+  });
+}
+
+/* ===========================================================================
+   RENDER: PROJECT CARDS + FILTERS
+   =========================================================================== */
+function hasVerification(p){
+  return p.whatItShows.startsWith('[NEEDS VERIFICATION]') || p.features.some(f=>f.startsWith('['));
+}
+function imgSlot(path, dims, iconOnly){
+  return '<div class="slot"><img src="'+path+'" alt="" />'
+    + '<svg class="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="12" cy="10" r="3"/><path d="m5 20 5-5 4 4 2-2 3 3"/></svg>'
+    + '<span class="slot-dims">'+dims+'</span><span class="slot-path">'+path+'</span></div>';
+}
+function renderCards(cat){
+  const grid = document.getElementById('projectGrid');
+  const list = PROJECTS.filter(p => cat==='all' || p.category===cat);
+  grid.innerHTML = list.map(p => {
+    const i = PROJECTS.indexOf(p) + 1;
+    const ext = p.coverExt || 'png';
+    const coverPath = '/public/images/projects/'+p.slug+'/cover.'+ext;
+    return '<article class="card reveal in" data-slug="'+p.slug+'">'
+      + '<div class="card-top"><span class="card-idx">'+String(i).padStart(2,'0')+'</span>'
+      + '<span class="card-cat">'+p.catLabel+'</span>'
+      + '</div>'
+      + '<div class="card card-cover" style="border:none;border-bottom:1px solid var(--line);border-radius:0">'
+        + '<img src="'+coverPath+'" alt="'+esc(p.title)+' cover" style="width:100%;height:100%;object-fit:cover;display:block;" />'
+      + '</div>'
+      + '<div class="card-body">'
+        + '<h3 class="card-title">'+esc(p.title)+'</h3>'
+        + '<p class="card-desc">'+esc(p.fullDescription)+'</p>'
+        + '<div class="tags">'+p.techTags.map(t=>'<span class="tag">'+esc(t)+'</span>').join('')+'</div>'
+      + '</div></article>';
+  }).join('');
+}
+function renderFilters(){
+  const el = document.getElementById('filters');
+  el.innerHTML = CATEGORIES.map(c =>
+    '<button class="filter" data-cat="'+c.key+'" aria-pressed="'+(c.key==='all')+'">'+c.label+'</button>').join('');
+  el.addEventListener('click', e => {
+    const b = e.target.closest('.filter'); if(!b) return;
+    el.querySelectorAll('.filter').forEach(x=>x.setAttribute('aria-pressed','false'));
+    b.setAttribute('aria-pressed','true');
+    renderCards(b.dataset.cat);
+  });
+}
+
+/* ===========================================================================
+   RENDER: TECH TABLE + TOOL GROUPS
+   =========================================================================== */
+function renderTech(){
+  document.getElementById('langTable').innerHTML = LANGS.map((l,i) =>
+    '<tr><td><span class="tech-cell"><span class="lang-dot '+(i%3===1?'b':'')+'"></span>'+l[0]+'</span></td>'
+    + '<td style="color:var(--ink-dim)">'+l[1]+'</td>'
+    + '<td><span class="lvl">Beginner</span></td></tr>').join('');
+
+  document.getElementById('toolGroups').innerHTML = TOOL_GROUPS.map(g =>
+    '<div class="tool-group"><h4>'+g.h+'</h4><div class="tags">'
+    + g.items.map(t=>'<span class="tag">'+esc(t)+'</span>').join('') + '</div></div>').join('');
+}
+
+/* ===========================================================================
+   RENDER: LEARNING + MINDSET
+   =========================================================================== */
+function renderLists(){
+  document.getElementById('learningGrid').innerHTML = LEARNING.map(l =>
+    '<article class="card reveal in locked"><div class="card-top">'
+    + '<span class="card-cat">in progress</span><span class="spacer" style="flex:1"></span>'
+    + '<span class="lock-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>learning</span>'
+    + '</div><div class="card-body"><h3 class="card-title">'+esc(l.title)+'</h3>'
+    + '<p class="card-desc">'+esc(l.line)+'</p></div></article>').join('');
+
+  document.getElementById('mindGrid').innerHTML = MINDSET.map(m =>
+    '<article class="mind-card reveal in"><div class="mind-num">'+m.n+'</div>'
+    + '<h3>'+m.t+'</h3><p>'+m.d+'</p></article>').join('');
+}
+
+/* ===========================================================================
+   EFFECTS: typing, run bar, count-up, scroll reveal
+   =========================================================================== */
+function typeCode(){
+  const raw = ABOUT_SRC.split('\n');
+  const gutter = document.getElementById('gutter');
+  const code = document.getElementById('code');
+
+  // Re-highlight from scratch on each frame: cheap, and always correct for a partial line.
+  function paint(done){
+    const shown = raw.slice(0, done.line + 1).map((l, i) => {
+      if (i < done.line) return syntaxLines(l)[0].html;
+      return syntaxLines(l.slice(0, done.col))[0].html;
+    });
+    gutter.textContent = raw.map((_, i) => i + 1).join('\n');
+    code.innerHTML = shown.join('\n') + '<span class="caret"></span>';
+  }
+
+  let li = 0, ci = 0;
+  (function step(){
+    paint({ line: li, col: ci });
+    if (li >= raw.length) return;
+    if (ci < raw[li].length) ci++;
+    else { li++; ci = 0; }
+    setTimeout(step, li < raw.length && raw[li].length < 12 ? 70 : 14);
+  })();
+}
+function countUp(){
+  document.querySelectorAll('[data-count]').forEach(el=>{
+    const target = +el.dataset.count;
+    let n = 0;
+    const step = () => {
+      n = Math.min(target, n + 1);
+      el.textContent = n;
+      if (n < target) setTimeout(step, 90);
+    };
+    step();
+  });
+}
+function initReveal(){
+  const els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) { els.forEach(e=>e.classList.add('in')); return; }
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{
+      if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, { rootMargin:'0px 0px -8% 0px', threshold:.12 });
+  els.forEach(e=>io.observe(e));
+}
+function initTabs(){
+  const btns = document.querySelectorAll('.switcher button');
+  const views = document.querySelectorAll('.viewport > section[data-view]');
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    btns.forEach(x=>x.setAttribute('aria-selected','false'));
+    b.setAttribute('aria-selected','true');
+    views.forEach(v=>v.classList.toggle('active', v.id===b.dataset.target));
+    window.scrollTo(0,0);
+  }));
+}
+function initNav(){
+  const burger = document.getElementById('burger');
+  const menu = document.getElementById('mobileMenu');
+  burger.addEventListener('click',()=>{
+    const open = menu.classList.toggle('open');
+    burger.setAttribute('aria-expanded', String(open));
+  });
+  menu.addEventListener('click',e=>{ if(e.target.tagName==='A'){ menu.classList.remove('open'); burger.setAttribute('aria-expanded','false'); }});
+}
+
+/* ===========================================================================
+   README (Deliverable B) — plain text, safe to render inside <pre>
+   =========================================================================== */
+const README = `# Hi, I'm Lord Stephen H. Cambalon 👋
+
+**2nd year BSIT student • Aspiring Software Engineer and Game Developer**
+
+I'm a second year Information Technology student learning to build real things. Most of my work is
+beginner level, and I'd rather show it than talk about it: C++ programs and games, C# desktop and
+Unity applications, Roblox games in Luau, Java OOP projects, a web page, and a Figma UI/UX prototype.
+Ten projects so far, and I'm still going.
+
+📫 **Email:** [lord_cambalon@sjp2cd.edu.ph](mailto:lord_cambalon@sjp2cd.edu.ph)
+🌐 **GitHub:** [@vxxcode](https://github.com/vxxcode)
+
+---
+
+## About Me
+
+- 👨‍🎓 **2nd year BSIT student** — Bachelor of Science in Information Technology
+- 🎯 **Aiming for** Software Engineer and Game Developer
+- 📊 **Level:** Beginner / Entry-Level
+- 🧠 **Mindset:** progressive, relentless, perseverance, continuous learning
+
+I learn by building. Ten projects so far — three C++ games in VS Code, two Unity projects in C#, a
+Roblox game in Luau, a C# enrollment system, a Java e-commerce console shop, an HTML appreciation
+page, and a Figma UI/UX design. I'm still early in this, and I keep building anyway.
+
+<!-- PASTE IMAGE HERE — ./assets/hero/me.png (optional, recommended 800x600) -->
+
+## Tech Stack
+
+**Languages** — all at beginner level, used in real projects where listed.
+
+<!-- PASTE IMAGE HERE — ./assets/badges/languages.png -->
+
+| Language | Where I've used it |
+|---|---|
+| C++ | Snake Game, Fruit Catching Game, Car Game |
+| C# | C# Enrollment System, Hysteria, PCreatures |
+| Java | Java E-Commerce Game Console Shop |
+| Luau | Project Slayers (Roblox) |
+| HTML | HTML Appreciation Page |
+| PHP | [NEEDS VERIFICATION] — no project listed yet |
+| CSS | [NEEDS VERIFICATION] — no project listed yet |
+| JavaScript | [NEEDS VERIFICATION] — no project listed yet |
+| Python | [NEEDS VERIFICATION] — no project listed yet |
+
+**Tools**
+
+<!-- PASTE IMAGE HERE — ./assets/badges/tools.png -->
+
+Visual Studio • Visual Studio Code • Git • GitHub • Figma • Canva • Microsoft Office • Unreal Engine
+• Unity • Roblox Studio • PyCharm • Eclipse • IntelliJ IDEA • NetBeans • XAMPP
+
+**Currently learning:** Rust, Swift, Databases — plus reinforcing the languages above.
+
+## Featured Projects
+
+<!-- PASTE IMAGE HERE — ./assets/projects/featured.png (optional, a 3x3 grid of covers) -->
+
+| # | Project | Tech | Description |
+|---|---|---|---|
+| 01 | [C# Enrollment System]([ADD GITHUB REPOSITORY]) | C#, Visual Studio | A C# application built around a student enrollment system. |
+| 02 | [Java E-Commerce Game Console Shop]([ADD GITHUB REPOSITORY]) | Java, OOP | A Java project simulating a shop for game consoles. |
+| 03 | [JeepNiBay]([ADD GITHUB REPOSITORY]) | Figma, UI/UX | A UI/UX design project created in Figma. |
+| 04 | [HTML Appreciation Page]([ADD GITHUB REPOSITORY]) | HTML | A personal web page built with HTML as an appreciation gift. |
+| 05 | [Hysteria]([ADD GITHUB REPOSITORY]) | C#, Unity | A game project made with C# and Unity. |
+| 06 | [PCreatures]([ADD GITHUB REPOSITORY]) | C#, Unity | A game project made with C# and Unity. |
+| 07 | [Project Slayers]([ADD GITHUB REPOSITORY]) | Luau, Roblox Studio | A Roblox game made with Roblox Studio and Luau. |
+| 08 | [Snake Game]([ADD GITHUB REPOSITORY]) | C++, VS Code | A C++ version of the classic Snake game. |
+| 09 | [Fruit Catching Game]([ADD GITHUB_REPOSITORY]) | C++, VS Code | A C++ game where the goal is to catch fruit. |
+| 10 | [Car Game]([ADD GITHUB REPOSITORY]) | C++, VS Code | A C++ car game project. |
+
+> Demo links, features and screenshots are marked \`[ADD DEMO]\` or \`[NEEDS VERIFICATION]\`
+> in each project's README until they are confirmed. I don't post features I can't back up.
+
+## Development Projects
+
+The C++ games — Snake, Fruit Catching, and Car — are where I started. Writing them in VS Code taught
+me grid updates, collision checks, and reading input every frame.
+
+- Snake Game — classic snake gameplay, practicing core game logic. *Console or graphical, controls,
+  and scoring: [NEEDS VERIFICATION]*
+- Fruit Catching Game — timing and player interaction. *Console or graphical, controls, and scoring:
+  [NEEDS VERIFICATION]*
+- Car Game — game logic and player input. *Gameplay and mechanics: [NEEDS VERIFICATION]*
+
+## Web Development
+
+**HTML Appreciation Page** — a personal page made as an appreciation gift, and my first exercise in
+structuring content for the web. *Use of CSS/JavaScript, layout, and media: [NEEDS VERIFICATION]*
+
+<!-- PASTE IMAGE HERE — ./assets/projects/html-appreciation-page/cover.png -->
+
+## UI/UX Design
+
+**JeepNiBay** — a Figma design project where I practiced planning and designing screens.
+*Purpose, target users, number of screens, and prototype flow: [NEEDS VERIFICATION]*
+
+<!-- PASTE IMAGE HERE — ./assets/projects/jeepnibay/cover.png -->
+
+## Currently Learning
+
+- **Rust** — systems programming with a borrow checker is a very different way of thinking
+- **Swift** — wanting to build for Apple platforms next
+- **Databases** — SQL and data modelling, so my programs can actually store things properly
+
+## Developer Mindset
+
+01. **Learning** — I learn by building something small, then fixing what breaks.
+02. **Building** — projects are how I find out what I actually understand.
+03. **Making mistakes** — I break code constantly. Now I change one thing, then run it.
+04. **Improving** — I rewrite old projects when I learn something better.
+05. **Trying again** — when a topic doesn't click, I do a smaller version and build back up.
+06. **Growing** — I have no title to lean on yet, so progress has to show in the work.
+
+## Contact
+
+[![GitHub](https://img.shields.io/badge/GitHub-@vxxcode-d97757?style=for-the-badge&logo=github)](https://github.com/vxxcode)
+[![Email](https://img.shields.io/badge/Email-lord__cambalon%40sjp2cd.edu.ph-d97757?style=for-the-badge&logo=gmail)](mailto:lord_cambalon@sjp2cd.edu.ph)
+
+If you're hiring a beginner who actually ships projects, or you just want to talk about game dev,
+reach out. Open to internships, entry-level roles, and study groups.
+
+---
+
+\`\`\`
+$ vxxcode --keep-building
+\`\`\`
+
+<!--
+NOTES FOR ME:
+- Replace every [ADD GITHUB REPOSITORY] with the real repo URL.
+- Replace [ADD DEMO] only where a live demo actually exists.
+- Fill [NEEDS VERIFICATION] items only after checking the source code.
+- Optional resume link is not listed yet.
+-->`;
+
+/* ===========================================================================
+   CHECKLIST (Deliverable C)
+   =========================================================================== */
+const IMAGE_PATHS = [
+  '/public/images/hero/photo.png — hero photo or avatar',
+  '/public/images/about/about.png — About section image',
+  '/public/images/projects/csharp-enrollment-system/cover.png',
+  '/public/images/projects/csharp-enrollment-system/screen-1.png',
+  '/public/images/projects/csharp-enrollment-system/screen-2.png',
+  '/public/images/projects/java-ecommerce-console-shop/cover.png',
+  '/public/images/projects/java-ecommerce-console-shop/screen-1.png',
+  '/public/images/projects/java-ecommerce-console-shop/screen-2.png',
+  '/public/images/projects/jeepnibay/cover.png',
+  '/public/images/projects/jeepnibay/screen-1.png',
+  '/public/images/projects/jeepnibay/screen-2.png',
+  '/public/images/projects/html-appreciation-page/cover.png',
+  '/public/images/projects/html-appreciation-page/screen-1.png',
+  '/public/images/projects/html-appreciation-page/screen-2.png',
+  '/public/images/projects/hysteria/cover.png',
+  '/public/images/projects/hysteria/screen-1.png',
+  '/public/images/projects/hysteria/screen-2.png',
+  '/public/images/projects/pcreatures/cover.png',
+  '/public/images/projects/pcreatures/screen-1.png',
+  '/public/images/projects/pcreatures/screen-2.png',
+  '/public/images/projects/project-slayers/cover.png',
+  '/public/images/projects/project-slayers/screen-1.png',
+  '/public/images/projects/project-slayers/screen-2.png',
+  '/public/images/projects/snake-game/cover.png',
+  '/public/images/projects/snake-game/screen-1.png',
+  '/public/images/projects/snake-game/screen-2.png',
+  '/public/images/projects/fruit-catching-game/cover.png',
+  '/public/images/projects/fruit-catching-game/screen-1.png',
+  '/public/images/projects/fruit-catching-game/screen-2.png',
+  '/public/images/projects/car-game/cover.png',
+  '/public/images/projects/car-game/screen-1.png',
+  '/public/images/projects/car-game/screen-2.png',
+  './assets/badges/languages.png (README)',
+  './assets/badges/tools.png (README)',
+  './assets/projects/featured.png (README)',
+  './assets/projects/html-appreciation-page/cover.png (README)',
+  './assets/projects/jeepnibay/cover.png (README)',
+  './assets/hero/me.png (README, optional)'
+];
+
+const CHECKLIST = [
+  ['Needs verification — project details',
+    PROJECTS.flatMap(p=>[
+      p.title + ' — what it shows / concepts demonstrated',
+      p.title + ' — feature list',
+      p.whatItShowsQ,
+      p.featureQ
+    ])],
+  ['Needs verification — tech table',
+    ['PHP — which project used it (no project listed yet)',
+     'CSS — which project used it (no project listed yet)',
+     'JavaScript — which project used it (no project listed yet)',
+     'Python — which project used it (no project listed yet)',
+     'School name, if you want it shown on the About section']],
+  ['Add links',
+    ['C# Enrollment System — repository URL',
+     'Java E-Commerce Game Console Shop — repository URL',
+     'JeepNiBay — repository URL (a Figma file link is fine)',
+     'HTML Appreciation Page — repository URL',
+     'Hysteria — repository URL',
+     'PCreatures — repository URL',
+     'Project Slayers — repository URL',
+     'Snake Game — repository URL',
+     'Fruit Catching Game — repository URL',
+     'Car Game — repository URL',
+     'Project Slayers — Roblox game link (if published)',
+     'Demo links — only where a live demo actually exists',
+     'Resume link in the footer (currently shows [ADD LINK])']],
+  ['Images to drop in', IMAGE_PATHS]
+];
+
+/* ===========================================================================
+   INIT
+   =========================================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+  renderFilters();
+  renderCards('all');
+  renderTech();
+  renderLists();
+  initNav();
+  initTabs();
+  typeCode();
+  initReveal();
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // run button
+  document.getElementById('runBtn').addEventListener('click', () => {
+    const r = document.getElementById('runResult');
+    r.classList.remove('show'); void r.offsetWidth; r.classList.add('show');
+  });
+
+  // count up once the hero is visible
+  if ('IntersectionObserver' in window){
+    const io = new IntersectionObserver((en)=>{ en.forEach(e=>{ if(e.isIntersecting){ countUp(); io.disconnect(); } }); });
+    io.observe(document.querySelector('.stats'));
+  } else countUp();
+
+  // README into <pre>
+  document.getElementById('readmeSrc').textContent = README;
+
+  // checklist
+  document.getElementById('checklistBody').innerHTML = CHECKLIST.map(g =>
+    '<p class="grp">' + g[0] + ' (' + g[1].length + ')</p><ul class="check-list">'
+    + g[1].map(i=>'<li><span class="box"></span><span>' + esc(i) + '</span></li>').join('')
+    + '</ul>').join('');
+
+  // copy buttons
+  document.getElementById('copyReadme').addEventListener('click', function(){
+    navigator.clipboard.writeText(README).then(()=>{ this.textContent='Copied'; setTimeout(()=>this.textContent='Copy README.md',1400); });
+  });
+  document.getElementById('copyChecklist').addEventListener('click', function(){
+    const txt = CHECKLIST.map(g=>'## '+g[0].toUpperCase()+'\n'+g[1].map(i=>'- [ ] '+i).join('\n')).join('\n\n');
+    navigator.clipboard.writeText(txt).then(()=>{ this.textContent='Copied'; setTimeout(()=>this.textContent='Copy checklist',1400); });
+  });
+});
+</script>
+</body>
+</html>
